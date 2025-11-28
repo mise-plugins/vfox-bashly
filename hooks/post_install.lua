@@ -7,12 +7,15 @@ function PLUGIN:PostInstall(ctx)
     local path = sdkInfo.path
     local version = sdkInfo.version
 
+    -- Get the inherited PATH from the environment
+    local inheritedPath = os.getenv("PATH") or ""
+
     -- Create directories
     cmd.exec("mkdir -p '" .. path .. "/gem' '" .. path .. "/artifacts' '" .. path .. "/bin'")
 
-    -- Set up gem environment variables
+    -- Set up gem environment variables with inherited PATH
     local gemHome = path .. "/gem"
-    local gemEnv = "GEM_HOME='" .. gemHome .. "' GEM_PATH='" .. gemHome .. "' PATH='" .. gemHome .. "/bin:$PATH'"
+    local gemEnv = "GEM_HOME='" .. gemHome .. "' GEM_PATH='" .. gemHome .. "' PATH='" .. gemHome .. "/bin:" .. inheritedPath .. "'"
 
     -- Ensure bundler is installed
     cmd.exec(gemEnv .. " gem install bundler --no-document")
