@@ -1,0 +1,33 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+
+      - name: Install mise
+        uses: jdx/mise-action@v2
+
+      - name: Install bashly using vfox plugin from GitHub
+        run: |
+          mise install "vfox:mise-plugins/vfox-bashly@1.2.0"
+
+      - name: Test bashly
+        run: |
+          mise x "vfox:mise-plugins/vfox-bashly@1.2.0" -- bashly --version
+          mise x "vfox:mise-plugins/vfox-bashly@1.2.0" -- bashly --help
